@@ -9,6 +9,7 @@ class GeneralTextField extends StatefulWidget {
     required this.textInputAction,
     required this.controller,
     required this.validate,
+    required this.onFieldSubmitted,
 
      Key? key }) : super(key: key);
 
@@ -18,6 +19,7 @@ class GeneralTextField extends StatefulWidget {
   final TextInputAction textInputAction;
   final TextEditingController controller;
   final String? Function(String?)? validate;
+  final Function(String)? onFieldSubmitted;
 
   @override
   State<GeneralTextField> createState() => _GeneralTextFieldState();
@@ -66,6 +68,7 @@ class _GeneralTextFieldState extends State<GeneralTextField> {
               ),
             ),
             validator: widget.validate,
+            onFieldSubmitted: widget.onFieldSubmitted,
           );
   }
 }

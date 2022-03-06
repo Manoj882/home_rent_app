@@ -1,10 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
 import 'package:home_rent_app/constants/general_divider.dart';
+import 'package:home_rent_app/screens/authentication/singup_screen.dart';
+import 'package:home_rent_app/screens/home_screen.dart';
 import 'package:home_rent_app/utils/general_submit_button.dart';
 import 'package:home_rent_app/utils/size_config.dart';
 import 'package:home_rent_app/utils/validation_mixin.dart';
 import 'package:home_rent_app/widgets/general_text_field.dart';
+
+import '../../widgets/general_alert_dialog.dart';
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({Key? key}) : super(key: key);
@@ -48,7 +53,13 @@ class LoginScreen extends StatelessWidget {
                         "Don't have an account?",
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SignUpScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Register",
                         ),
@@ -137,6 +148,7 @@ class LoginScreen extends StatelessWidget {
                   textInputAction: TextInputAction.next,
                   controller: emailController,
                   validate: (value) => ValidationMixin().validateEmail(value!),
+                  onFieldSubmitted: (_){},
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -144,10 +156,11 @@ class LoginScreen extends StatelessWidget {
                 GeneralTextField(
                   title: "Password",
                   textInputType: TextInputType.text,
-                  textInputAction: TextInputAction.next,
+                  textInputAction: TextInputAction.done,
                   controller: passwordController,
                   validate: (value) =>
                       ValidationMixin().validatePassword(value!),
+                  onFieldSubmitted: (_) => _submit(context),
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -155,7 +168,7 @@ class LoginScreen extends StatelessWidget {
                 GeneralSubmitButton(
                   title: "Login",
                   onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                    _submit(context);
                   },
                 ),
                 SizedBox(
@@ -171,5 +184,45 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _submit(context) async {
+    try {
+      if (formKey.currentState!.validate()) {
+        GeneralAlertDialog().customLoadingDialog(context);
+        final emailAddress = emailController.text;
+        final password = passwordController.text;
+        final firebaseAuth = FirebaseAuth.instance;
+        await firebaseAuth.signInWithEmailAndPassword(
+          email: emailAddress,
+          password: password,
+        );
+        Navigator.pop(context);
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomeScreen(),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (ex) {
+      Navigator.pop(context);
+      var message = "";
+      if (ex.code == "invalid-email") {
+        message = "The email address is not valid.";
+      }
+      if (ex.code == "user-not-found") {
+        message = "User doesnot exist";
+      }
+      if (ex.code == "wrong-password") {
+        message =
+            "The password is incorrect";
+      }
+      await GeneralAlertDialog().customAlertDialog(context, message);
+    } catch (ex) {
+      Navigator.pop(context);
+
+      await GeneralAlertDialog().customAlertDialog(context, ex.toString());
+    }
   }
 }

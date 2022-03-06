@@ -1,9 +1,12 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
 import 'package:home_rent_app/constants/general_divider.dart';
+import 'package:home_rent_app/screens/authentication/login_screen.dart';
 import 'package:home_rent_app/utils/general_submit_button.dart';
 import 'package:home_rent_app/utils/size_config.dart';
 import 'package:home_rent_app/utils/validation_mixin.dart';
+import 'package:home_rent_app/widgets/general_alert_dialog.dart';
 import 'package:home_rent_app/widgets/general_text_field.dart';
 
 class SignUpScreen extends StatelessWidget {
@@ -48,7 +51,13 @@ class SignUpScreen extends StatelessWidget {
                         "Already have an account?",
                       ),
                       TextButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => LoginScreen(),
+                            ),
+                          );
+                        },
                         child: const Text(
                           "Login",
                         ),
@@ -137,6 +146,7 @@ class SignUpScreen extends StatelessWidget {
                   textInputAction: TextInputAction.next,
                   controller: emailController,
                   validate: (value) => ValidationMixin().validateEmail(value!),
+                  onFieldSubmitted: (_){},
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -148,6 +158,7 @@ class SignUpScreen extends StatelessWidget {
                   controller: passwordController,
                   validate: (value) =>
                       ValidationMixin().validatePassword(value!),
+                  onFieldSubmitted: (_){},
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -162,14 +173,15 @@ class SignUpScreen extends StatelessWidget {
                     isConfirmed: true,
                     confirmedValue: value!,
                   ),
+                  onFieldSubmitted: (_) => submit(context),
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
                 ),
                 GeneralSubmitButton(
                   title: "Sign Up",
-                  onPressed: () {
-                    if (formKey.currentState!.validate()) {}
+                  onPressed: () async {
+                    await submit(context);
                   },
                 ),
                 SizedBox(
@@ -185,5 +197,41 @@ class SignUpScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  submit(context) async{
+    try {
+      if (formKey.currentState!.validate()) {
+        GeneralAlertDialog().customLoadingDialog(context);
+        final emailAddress = emailController.text;
+        final password = passwordController.text;
+        final firebaseAuth = FirebaseAuth.instance;
+        await firebaseAuth.createUserWithEmailAndPassword(
+          email: emailAddress,
+          password: password,
+        );
+        Navigator.pop(context);
+        Navigator.pop(context);
+      }
+    } 
+    on FirebaseAuthException catch(ex){
+      Navigator.pop(context);
+      var message = "";
+      if(ex.code == "invalid-email"){
+        message = "The email address is not valid.";
+      }
+      if(ex.code == "email-already-in-use"){
+        message = "The email address is already taken.";
+      }
+      if(ex.code == "weak-password"){
+        message = "Your password is too weak. Try adding alphanumeric characters.";
+      }
+      await GeneralAlertDialog().customAlertDialog(context, message);
+    }
+    catch (ex) {
+      Navigator.pop(context);
+      
+      await GeneralAlertDialog().customAlertDialog(context, ex.toString());
+    }
   }
 }

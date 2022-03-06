@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "242647364416",
+    "project_id": "home-rent-app-5e733",
+    "storage_bucket": "home-rent-app-5e733.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:242647364416:android:51afdcbe9d6f8e7163c0a5",
+        "android_client_info": {
+          "package_name": "com.manojbk.home_rent_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "242647364416-82r6oc23n2dsd1es1pieec2mdtp34o5i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7DXDqU6o_5LoJ3Spx10iS6vDiJQ69teE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "242647364416-82r6oc23n2dsd1es1pieec2mdtp34o5i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
