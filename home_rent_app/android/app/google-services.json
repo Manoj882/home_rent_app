@@ -14,6 +14,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "242647364416-f7mgrueilr9ksn6lskqkcak83ko2c036.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.manojbk.home_rent_app",
+            "certificate_hash": "c684cb135464ec530e90df9b1940b1888de36be5"
+          }
+        },
+        {
           "client_id": "242647364416-82r6oc23n2dsd1es1pieec2mdtp34o5i.apps.googleusercontent.com",
           "client_type": 3
         }

@@ -3,11 +3,12 @@ import 'package:home_rent_app/utils/size_config.dart';
 
 ThemeData lightTheme(BuildContext context) {
   return ThemeData(
-    primaryColor: Colors.blue,
-    scaffoldBackgroundColor: const Color(0xfff2f3f7),
+    primaryColor: Colors.purpleAccent,
+    // scaffoldBackgroundColor: const Color(0xfff2f3f7),
+    scaffoldBackgroundColor: Colors.purpleAccent,
     appBarTheme: AppBarTheme(
       elevation: 0,
-      color: Colors.blue,
+      color: Colors.purpleAccent,
       titleTextStyle: TextStyle(
         color: Colors.white,
         fontSize: SizeConfig.width * 4,
@@ -56,7 +57,7 @@ ThemeData lightTheme(BuildContext context) {
         horizontal: SizeConfig.height * 2,
       ),
       hintStyle: TextStyle(
-        fontSize: SizeConfig.width * 4,
+        fontSize: SizeConfig.width * 3.5,
       ),
       enabledBorder: OutlineInputBorder(
                 borderSide: const BorderSide(

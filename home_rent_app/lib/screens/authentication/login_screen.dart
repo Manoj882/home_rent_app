@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
 import 'package:home_rent_app/constants/general_divider.dart';
+import 'package:home_rent_app/models/firebase_user.dart';
 import 'package:home_rent_app/screens/authentication/singup_screen.dart';
 import 'package:home_rent_app/screens/home_screen.dart';
 import 'package:home_rent_app/utils/general_submit_button.dart';
@@ -23,6 +24,7 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xfff2f3f7),
       body: SafeArea(
         child: Stack(
           children: [
@@ -147,7 +149,7 @@ class LoginScreen extends StatelessWidget {
                   textInputAction: TextInputAction.next,
                   controller: emailController,
                   validate: (value) => ValidationMixin().validateEmail(value!),
-                  onFieldSubmitted: (_){},
+                  onFieldSubmitted: (_) {},
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -193,10 +195,20 @@ class LoginScreen extends StatelessWidget {
         final emailAddress = emailController.text;
         final password = passwordController.text;
         final firebaseAuth = FirebaseAuth.instance;
-        await firebaseAuth.signInWithEmailAndPassword(
+        final userCredential = await firebaseAuth.signInWithEmailAndPassword(
           email: emailAddress,
           password: password,
         );
+        final user = userCredential.user;
+        if(user!= null){
+        FirebaseUser(
+          displayName: user.displayName ?? "",
+          email: user.email ?? "",
+          photoUrl: user.photoURL ?? "",
+          uid: user.uid,
+        );
+        }
+
         Navigator.pop(context);
         Navigator.pushReplacement(
           context,
@@ -215,8 +227,7 @@ class LoginScreen extends StatelessWidget {
         message = "User doesnot exist";
       }
       if (ex.code == "wrong-password") {
-        message =
-            "The password is incorrect";
+        message = "The password is incorrect";
       }
       await GeneralAlertDialog().customAlertDialog(context, message);
     } catch (ex) {
