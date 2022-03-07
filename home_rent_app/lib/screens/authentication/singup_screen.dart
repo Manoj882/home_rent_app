@@ -21,7 +21,7 @@ class SignUpScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff2f3f7),
+      
       body: SafeArea(
         child: Stack(
           children: [
@@ -155,6 +155,7 @@ class SignUpScreen extends StatelessWidget {
                   title: "Password",
                   textInputType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  isObscure: true,
                   controller: passwordController,
                   validate: (value) =>
                       ValidationMixin().validatePassword(value!),
@@ -168,6 +169,7 @@ class SignUpScreen extends StatelessWidget {
                   textInputType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   controller: confirmPasswordController,
+                  isObscure: true,
                   validate: (value) => ValidationMixin().validatePassword(
                     passwordController.text,
                     isConfirmed: true,

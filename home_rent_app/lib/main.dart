@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/screens/authentication/login_screen.dart';
+import 'package:home_rent_app/theme/theme_data.dart';
 
 import 'package:home_rent_app/utils/size_config.dart';
 
@@ -21,10 +22,7 @@ class MyApp extends StatelessWidget {
         SizeConfig().init(constraints);
         return MaterialApp(
           title: 'Home Rent App',
-          theme: ThemeData(
-            
-            primarySwatch: Colors.blue,
-          ),
+          theme: lightTheme(context),
           home: LoginScreen(),
         );
       }

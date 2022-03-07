@@ -23,7 +23,6 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff2f3f7),
       body: SafeArea(
         child: Stack(
           children: [
@@ -158,6 +157,7 @@ class LoginScreen extends StatelessWidget {
                   textInputType: TextInputType.text,
                   textInputAction: TextInputAction.done,
                   controller: passwordController,
+                  isObscure: true,
                   validate: (value) =>
                       ValidationMixin().validatePassword(value!),
                   onFieldSubmitted: (_) => _submit(context),
