@@ -5,3 +5,7 @@ class ImageConstants{
   static const basePath = "assets/images";
   static const logo ="$basePath/home.png";
 }
+
+class UserConstants{
+  static const userCollection = "user";
+}

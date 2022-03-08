@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
+import 'package:home_rent_app/provider/user_provider.dart';
 import 'package:home_rent_app/screens/profile/user_profile_screen.dart';
 import 'package:home_rent_app/utils/navigate.dart';
 import 'package:home_rent_app/utils/size_config.dart';
 import 'package:home_rent_app/widgets/curved_body_widget.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,15 +23,21 @@ class HomeScreen extends StatelessWidget {
       drawer: Drawer(
         child: Column(
           children: [
-            UserAccountsDrawerHeader(
-              accountName: const Text("Manoj BK"),
-              accountEmail: const Text("manojbk488@gmail.com"),
-              currentAccountPicture: Hero(
-                tag: "image-url",
-                child: CircleAvatar(
-                  backgroundImage: NetworkImage(image),
-                ),
-              ),
+            Consumer<UserProvider>(
+              builder: (_,data,__) {
+                return UserAccountsDrawerHeader(
+                  accountName:  Text(data.user.name ?? "No Name",),
+                  accountEmail: Text(
+                    data.user.email ?? "No Email",
+                  ),
+                  currentAccountPicture: Hero(
+                    tag: "image-url",
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(data.user.image ?? image),
+                    ),
+                  ),
+                );
+              }
             ),
             ListTile(
               title: const Text("Profile"),

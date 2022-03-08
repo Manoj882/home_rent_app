@@ -1,11 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:home_rent_app/provider/user_provider.dart';
 import 'package:home_rent_app/screens/authentication/login_screen.dart';
 import 'package:home_rent_app/theme/theme_data.dart';
 
 import 'package:home_rent_app/utils/size_config.dart';
+import 'package:provider/provider.dart';
 
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
@@ -17,16 +19,20 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => UserProvider(),
+        ),
+      ],
+      child: LayoutBuilder(builder: (context, constraints) {
         SizeConfig().init(constraints);
         return MaterialApp(
           title: 'Home Rent App',
           theme: lightTheme(context),
           home: LoginScreen(),
         );
-      }
+      }),
     );
   }
 }
-
