@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
@@ -203,14 +204,25 @@ class LoginScreen extends StatelessWidget {
         );
         final user = userCredential.user;
         if (user != null) {
-          Provider.of<UserProvider>(context, listen: false).setUser(
-            FirebaseUser(
-              displayName: user.displayName,
-              email: user.email,
-              photoUrl: user.photoURL,
-              uuid: user.uid,
-            ).toJson(),
-          );
+          final firestore = FirebaseFirestore.instance;
+          final data = await firestore
+              .collection(UserConstants.userCollection)
+              .where(UserConstants.userId, isEqualTo: user.uid)
+              .get();
+              var map ={};
+          if (data.docs.isEmpty) {
+            map =
+              FirebaseUser(
+                displayName: user.displayName,
+                email: user.email,
+                photoUrl: user.photoURL,
+                uuid: user.uid,
+              ).toJson();
+            
+          } else {
+            map = data.docs.first.data();    
+          }
+          Provider.of<UserProvider>(context, listen: false).setUser(map);
         }
 
         Navigator.pop(context);

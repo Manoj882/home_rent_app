@@ -24,6 +24,12 @@ class UserProvider extends ChangeNotifier {
       photoUrl: null,
       age: age,
     );
+    notifyListeners();
     return _user.toJson();
+  }
+
+  updateuserImage(String image){
+    _user.image = image;
+    notifyListeners();
   }
 }

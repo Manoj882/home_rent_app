@@ -8,4 +8,5 @@ class ImageConstants{
 
 class UserConstants{
   static const userCollection = "user";
+  static const userId = "uuid";
 }
