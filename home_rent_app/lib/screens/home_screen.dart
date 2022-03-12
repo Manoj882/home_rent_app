@@ -1,12 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:home_rent_app/constants/constants.dart';
-import 'package:home_rent_app/provider/user_provider.dart';
-import 'package:home_rent_app/screens/profile/user_profile_screen.dart';
-import 'package:home_rent_app/utils/navigate.dart';
-import 'package:home_rent_app/utils/size_config.dart';
-import 'package:home_rent_app/widgets/curved_body_widget.dart';
+import '/provider/user_provider.dart';
+import '/screens/profile/user_profile_screen.dart';
+import '/screens/utilities_price_screen.dart';
+import '/utils/navigate.dart';
+import '/utils/size_config.dart';
+import '/widgets/curved_body_widget.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -25,46 +25,47 @@ class HomeScreen extends StatelessWidget {
       drawer: Drawer(
         child: Column(
           children: [
-            Consumer<UserProvider>(
-              builder: (_,data,__) {
-                return UserAccountsDrawerHeader(
-                  accountName:  Text(data.user.name ?? "No Name",),
-                  accountEmail: Text(
-                    data.user.email ?? "No Email",
-                  ),
-                  currentAccountPicture: Hero(
+            Consumer<UserProvider>(builder: (_, data, __) {
+              return UserAccountsDrawerHeader(
+                accountName: Text(
+                  data.user.name ?? "No Name",
+                ),
+                accountEmail: Text(
+                  data.user.email ?? "No Email",
+                ),
+                currentAccountPicture: Hero(
                     tag: "image-url",
                     child: SizedBox(
-                    height: SizeConfig.height * 16,
-                    width: SizeConfig.height * 16,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(SizeConfig.height *8,),
-                      child: data.user.image == null
-                            ? Image.network(image,
-                            fit: BoxFit.cover,
-                            )
-                            :Image.memory(
-                                base64Decode(data.user.image!,),
+                      height: SizeConfig.height * 16,
+                      width: SizeConfig.height * 16,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          SizeConfig.height * 8,
+                        ),
+                        child: data.user.image == null
+                            ? Image.network(
+                                image,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.memory(
+                                base64Decode(
+                                  data.user.image!,
+                                ),
                                 fit: BoxFit.cover,
                               ),
-                    ),
-                  ) 
-                      
-                  ),
-                );
-              }
+                      ),
+                    )),
+              );
+            }),
+            buildListTile(
+              context,
+              label: "Profile",
+              widget: UserProfileScreen(imageUrl: image),
             ),
-            ListTile(
-              title: const Text("Profile"),
-              trailing: const Icon(
-                Icons.arrow_right_outlined,
-              ),
-              onTap: () => Navigate(
-                context,
-                UserProfileScreen(
-                  imageUrl: image,
-                ),
-              ),
+            buildListTile(
+              context,
+              label: "Utilities Price",
+              widget:  UtilitiesPriceScreen(),
             ),
           ],
         ),
@@ -79,6 +80,20 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget buildListTile(BuildContext context,
+      {required String label, required Widget widget}) {
+    return ListTile(
+      title: Text(label),
+      trailing: const Icon(
+        Icons.arrow_right_outlined,
+      ),
+      onTap: () => Navigate(
+        context,
+        widget,
       ),
     );
   }

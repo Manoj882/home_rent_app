@@ -41,4 +41,17 @@ class ValidationMixin{
     return null;
   }
 
+  String? validateNumber(String value, String title, double maxValue){
+    if(value.trim().isEmpty){
+      return "Please enter your $title";
+    }
+    else if(int.tryParse(value)==null){
+      return "Please enter a numeric value";
+    }
+    if(double.parse(value) < 0 || double.parse(value) > maxValue){
+      return "Please enter $title more than 0 and less than $maxValue";
+    }
+    return null;
+  }
+
 }

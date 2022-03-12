@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:home_rent_app/constants/constants.dart';
-import 'package:home_rent_app/provider/user_provider.dart';
-import 'package:home_rent_app/utils/size_config.dart';
-import 'package:home_rent_app/utils/validation_mixin.dart';
-import 'package:home_rent_app/widgets/curved_body_widget.dart';
-import 'package:home_rent_app/widgets/general_alert_dialog.dart';
-import 'package:home_rent_app/widgets/general_text_field.dart';
+import '/constants/constants.dart';
+import '/provider/user_provider.dart';
+import '/utils/firebase_helper.dart';
+import '/utils/size_config.dart';
+import '/utils/validation_mixin.dart';
+import '/widgets/curved_body_widget.dart';
+import '/widgets/general_alert_dialog.dart';
+import '/widgets/general_text_field.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
@@ -39,24 +39,27 @@ class UserProfileScreen extends StatelessWidget {
             child: Column(
               children: [
                 Hero(
-                  tag: "image-url",
-                  child: SizedBox(
-                    height: SizeConfig.height * 16,
-                    width: SizeConfig.height * 16,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(SizeConfig.height *8,),
-                      child: profileData.image == null
-                            ? Image.network(imageUrl,
-                            fit: BoxFit.cover,
-                            )
-                            :Image.memory(
-                                base64Decode(profileData.image!,),
+                    tag: "image-url",
+                    child: SizedBox(
+                      height: SizeConfig.height * 16,
+                      width: SizeConfig.height * 16,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                          SizeConfig.height * 8,
+                        ),
+                        child: profileData.image == null
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                              )
+                            : Image.memory(
+                                base64Decode(
+                                  profileData.image!,
+                                ),
                                 fit: BoxFit.cover,
                               ),
-                    ),
-                  )    
-                  
-                ),
+                      ),
+                    )),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
                 ),
@@ -104,38 +107,29 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 ElevatedButton(
                   onPressed: () async {
+                    
                     if (formKey.currentState!.validate()) {
-                      try {
-                        GeneralAlertDialog().customLoadingDialog(context);
-                        final map =
-                            Provider.of<UserProvider>(context, listen: false)
-                                .updateUser(
-                          name: nameController.text,
-                          address: addressController.text,
-                          age: int.parse(ageController.text),
-                        );
-                        final firestore = FirebaseFirestore.instance;
-                        final data = await firestore
-                            .collection(UserConstants.userCollection)
-                            .where(UserConstants.userId,
-                                isEqualTo: profileData.uuid)
-                            .get();
-                        if (data.docs.isEmpty) {
-                          await firestore
-                              .collection(UserConstants.userCollection)
-                              .add(map);
-                        } else {
-                          data.docs.first.reference.update(map);
-                        }
-
-                        Navigator.pop(context);
-                        Navigator.pop(context);
-                        // print(map);
-                      } catch (ex) {
-                        print(ex.toString());
-                        Navigator.pop(context);
+                      try{
+                      final map =
+                          Provider.of<UserProvider>(context, listen: false)
+                              .updateUser(
+                        name: nameController.text,
+                        address: addressController.text,
+                        age: int.parse(ageController.text),
+                      );
+                      await FirebaseHelper().addOrUpdateContent(
+                        context,
+                        collectionId: UserConstants.userCollection,
+                        whereId: UserConstants.userId,
+                        whereValue: profileData.uuid,
+                        map: map,
+                      );
+                      Navigator.pop(context);
+                      } catch (ex){
+                        GeneralAlertDialog().customAlertDialog(context, ex.toString(),);
                       }
                     }
+                      
                   },
                   child: const Text("Save"),
                 ),
@@ -143,9 +137,8 @@ class UserProfileScreen extends StatelessWidget {
                   height: SizeConfig.height * 2,
                 ),
                 ElevatedButton(
-                  onPressed: () async{
+                  onPressed: () async {
                     await showBottomSheet(context);
-                   
                   },
                   child: const Text("Choose Image"),
                 ),
@@ -157,9 +150,8 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
-  Future <void> showBottomSheet(BuildContext context) async {
+  Future<void> showBottomSheet(BuildContext context) async {
     final imagePicker = ImagePicker();
-    
 
     await showModalBottomSheet(
       context: context,
@@ -194,9 +186,9 @@ class UserProfileScreen extends StatelessWidget {
                 ),
                 buildImageChooseOption(
                   context,
-                  function: () async{
-                    final xFile =
-                        await imagePicker.pickImage(source: ImageSource.gallery);
+                  function: () async {
+                    final xFile = await imagePicker.pickImage(
+                        source: ImageSource.gallery);
                     if (xFile != null) {
                       final uint8List = await xFile.readAsBytes();
                       Provider.of<UserProvider>(context, listen: false)
@@ -211,9 +203,7 @@ class UserProfileScreen extends StatelessWidget {
           ],
         ),
       ),
-      
     );
-   
   }
 
   Column buildImageChooseOption(
@@ -227,7 +217,7 @@ class UserProfileScreen extends StatelessWidget {
         IconButton(
           onPressed: () {
             function();
-          } ,
+          },
           color: Theme.of(context).primaryColor,
           iconSize: SizeConfig.height * 5,
           icon: Icon(

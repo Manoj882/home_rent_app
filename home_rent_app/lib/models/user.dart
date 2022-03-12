@@ -1,5 +1,5 @@
 class User{
-  late String? uuid;
+  late String uuid;
   late String? name;
   late String? email;
   late String? image;

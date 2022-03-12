@@ -10,3 +10,7 @@ class UserConstants{
   static const userCollection = "user";
   static const userId = "uuid";
 }
+
+class UtilitiesPriceConstant{
+  static const utilityPriceCollection ="utilities-price";
+}
