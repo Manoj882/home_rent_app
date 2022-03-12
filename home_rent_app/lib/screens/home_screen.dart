@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/constants/constants.dart';
 import 'package:home_rent_app/provider/user_provider.dart';
@@ -32,9 +34,22 @@ class HomeScreen extends StatelessWidget {
                   ),
                   currentAccountPicture: Hero(
                     tag: "image-url",
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(data.user.image ?? image),
+                    child: SizedBox(
+                    height: SizeConfig.height * 16,
+                    width: SizeConfig.height * 16,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(SizeConfig.height *8,),
+                      child: data.user.image == null
+                            ? Image.network(image,
+                            fit: BoxFit.cover,
+                            )
+                            :Image.memory(
+                                base64Decode(data.user.image!,),
+                                fit: BoxFit.cover,
+                              ),
                     ),
+                  ) 
+                      
                   ),
                 );
               }

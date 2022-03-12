@@ -40,19 +40,22 @@ class UserProfileScreen extends StatelessWidget {
               children: [
                 Hero(
                   tag: "image-url",
-                  child: CircleAvatar(
+                  child: SizedBox(
+                    height: SizeConfig.height * 16,
+                    width: SizeConfig.height * 16,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(SizeConfig.height *8,),
+                      child: profileData.image == null
+                            ? Image.network(imageUrl,
+                            fit: BoxFit.cover,
+                            )
+                            :Image.memory(
+                                base64Decode(profileData.image!,),
+                                fit: BoxFit.cover,
+                              ),
+                    ),
+                  )    
                   
-                    backgroundImage: profileData.image == null
-                        ? NetworkImage(imageUrl)
-                        : null,
-                    child: profileData.image != null
-                        ? Image.memory(
-                            base64Decode(profileData.image!),
-                          )
-                        : null,
-                    radius: SizeConfig.height * 10,
-                    
-                  ),
                 ),
                 SizedBox(
                   height: SizeConfig.height * 1.5,
@@ -142,6 +145,7 @@ class UserProfileScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () async{
                     await showBottomSheet(context);
+                   
                   },
                   child: const Text("Choose Image"),
                 ),
@@ -155,6 +159,7 @@ class UserProfileScreen extends StatelessWidget {
 
   Future <void> showBottomSheet(BuildContext context) async {
     final imagePicker = ImagePicker();
+    
 
     await showModalBottomSheet(
       context: context,
@@ -206,7 +211,9 @@ class UserProfileScreen extends StatelessWidget {
           ],
         ),
       ),
+      
     );
+   
   }
 
   Column buildImageChooseOption(

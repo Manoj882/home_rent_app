@@ -19,7 +19,7 @@ class UserProvider extends ChangeNotifier {
       uuid: _user.uuid,
       name: name,
       email: _user.email,
-      image: null,
+      image: _user.image,
       address: address,
       photoUrl: null,
       age: age,
