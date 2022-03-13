@@ -45,7 +45,7 @@ class ValidationMixin{
     if(value.trim().isEmpty){
       return "Please enter your $title";
     }
-    else if(int.tryParse(value)==null){
+    else if(double.tryParse(value)==null){
       return "Please enter a numeric value";
     }
     if(double.parse(value) < 0 || double.parse(value) > maxValue){
