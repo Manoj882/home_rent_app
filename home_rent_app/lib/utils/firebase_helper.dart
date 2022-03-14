@@ -34,21 +34,31 @@ class FirebaseHelper {
     }
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>>getData(
-    BuildContext context,
-    {
+  Future<QuerySnapshot<Map<String, dynamic>>> getData(
+    BuildContext context, {
     required String collectionId,
     required String whereId,
     required String whereValue,
-    }) async {
-   
+  }) async {
     final firestore = FirebaseFirestore.instance;
     final data = await firestore
         .collection(collectionId)
         .where(whereId, isEqualTo: whereValue)
-        .get(); 
-  
+        .get();
+
     return data;
-  
+  }
+
+  addData(
+    BuildContext context, {
+    required Map<String, dynamic> map,
+    required String collectionId,
+  }) async {
+    try {
+      GeneralAlertDialog().customLoadingDialog(context);
+      final data = await FirebaseFirestore.instance.collection(collectionId).add(map);
+    } catch (ex) {
+      print(ex.toString());
+    }
   }
 }

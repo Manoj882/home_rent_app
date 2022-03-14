@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:home_rent_app/provider/room_provider.dart';
 import 'package:home_rent_app/provider/user_provider.dart';
 import 'package:home_rent_app/provider/utilities_price_provider.dart';
 import 'package:home_rent_app/screens/authentication/login_screen.dart';
@@ -27,6 +28,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => UtilitiesPriceProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => RoomProvider(),
         ),
       ],
       child: LayoutBuilder(builder: (context, constraints) {

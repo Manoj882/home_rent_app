@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:home_rent_app/models/room.dart';
+import 'package:home_rent_app/provider/room_provider.dart';
+import 'package:home_rent_app/widgets/general_alert_dialog.dart';
+import 'package:home_rent_app/widgets/general_bottom_sheet.dart';
 import '/provider/user_provider.dart';
 import '/screens/profile/user_profile_screen.dart';
 import '/screens/utilities_price_screen.dart';
@@ -17,10 +21,39 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final future =
+        Provider.of<RoomProvider>(context, listen: false).fetchRoom(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Welcome Home"),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () async {
+              final roomName =
+                  await GeneralButtomSheet().customBottomSheet(context);
+
+              if (roomName != null) {
+                try {
+                  GeneralAlertDialog().customLoadingDialog(context);
+                  await Provider.of<RoomProvider>(context, listen: false)
+                      .addRoom(
+                    context,
+                    roomName,
+                  );
+                  Navigator.pop(context);
+                } catch (ex) {
+                  Navigator.pop(context);
+                  GeneralAlertDialog()
+                      .customAlertDialog(context, ex.toString());
+                }
+              }
+            },
+            icon: const Icon(
+              Icons.add_outlined,
+            ),
+          ),
+        ],
       ),
       drawer: Drawer(
         child: Column(
@@ -65,21 +98,58 @@ class HomeScreen extends StatelessWidget {
             buildListTile(
               context,
               label: "Utilities Price",
-              widget:  UtilitiesPriceScreen(),
+              widget: UtilitiesPriceScreen(),
             ),
           ],
         ),
       ),
       body: CurvedBodyWidget(
-        widget: SingleChildScrollView(
-          child: Column(
-            children: const [
-              Text(
-                "Welcome to Rent App",
-              ),
-            ],
-          ),
-        ),
+        widget: FutureBuilder(
+            future: future,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+              final listOfRoom = Provider.of<RoomProvider>(context).listOfRoom;
+
+              return listOfRoom.isEmpty
+                  ? Center(child: Text("You don't have any rooms."))
+                  : SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Your Rooms",
+                            style: Theme.of(context).textTheme.headline6,
+                          ),
+                          SizedBox(
+                            height: SizeConfig.height,
+                          ),
+                          GridView.builder(
+                            itemCount: listOfRoom.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 2,
+                              mainAxisSpacing: SizeConfig.height,
+                              crossAxisSpacing: SizeConfig.width,
+                            ),
+                            itemBuilder: (context, index) {
+                              return Card(
+                                color: Colors.red.shade200,
+                                child: Center(
+                                  child: Text(listOfRoom[index].name),
+                                ),
+                              );
+                            },
+                            shrinkWrap: true,
+                          ),
+                        ],
+                      ),
+                    );
+            }),
       ),
     );
   }

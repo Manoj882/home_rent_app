@@ -11,6 +11,7 @@ class UtilitiesPriceProvider extends ChangeNotifier {
   UtilitiesPrice? get utilitiesPrice => _utilitiesPrice;
 
   Future fetchPrice(BuildContext context) async {
+    try{
     final uuid =Provider.of<UserProvider>(context, listen: false).user.uuid;
     final data = await FirebaseHelper().getData(
       context,
@@ -19,8 +20,12 @@ class UtilitiesPriceProvider extends ChangeNotifier {
       whereValue: uuid,
     );
 
+
     if(data.docs.isNotEmpty){
       _utilitiesPrice = UtilitiesPrice.fromJson(data.docs.first.data());
+    }
+    } catch(ex){
+      print(ex.toString());
     }
   }
 }
