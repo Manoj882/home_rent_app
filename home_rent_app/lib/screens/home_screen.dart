@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/models/room.dart';
 import 'package:home_rent_app/provider/room_provider.dart';
+import 'package:home_rent_app/screens/room/room_screen.dart';
 import 'package:home_rent_app/widgets/general_alert_dialog.dart';
 import 'package:home_rent_app/widgets/general_bottom_sheet.dart';
 import '/provider/user_provider.dart';
@@ -137,10 +138,18 @@ class HomeScreen extends StatelessWidget {
                               crossAxisSpacing: SizeConfig.width,
                             ),
                             itemBuilder: (context, index) {
-                              return Card(
-                                color: Colors.red.shade200,
-                                child: Center(
-                                  child: Text(listOfRoom[index].name),
+                              return InkWell(
+                                onTap: () => Navigate(
+                                  context,
+                                  RoomScreen(
+                                    room: listOfRoom[index],
+                                  ),
+                                ),
+                                child: Card(
+                                  color: Colors.red.shade200,
+                                  child: Center(
+                                    child: Text(listOfRoom[index].name),
+                                  ),
                                 ),
                               );
                             },

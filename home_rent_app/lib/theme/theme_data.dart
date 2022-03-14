@@ -33,6 +33,7 @@ ThemeData lightTheme(BuildContext context) {
       bodyText1: TextStyle(
         color: Colors.black,
         fontFamily: "Open Sans",
+        fontWeight: FontWeight.bold,
       ),
       bodyText2: TextStyle(
         color: Colors.black,
