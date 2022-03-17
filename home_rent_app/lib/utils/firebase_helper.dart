@@ -55,7 +55,7 @@ class FirebaseHelper {
     required String collectionId,
   }) async {
     try {
-      GeneralAlertDialog().customLoadingDialog(context);
+     
       final data = await FirebaseFirestore.instance.collection(collectionId).add(map);
     } catch (ex) {
       print(ex.toString());

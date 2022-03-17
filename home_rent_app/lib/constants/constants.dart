@@ -19,3 +19,24 @@ class RoomConstant{
   static const roomCollection = "room";
   static const userId = "uuid";
 }
+
+class RoomRentConstant{
+  static const roomRentCollection = "room-rent";
+}
+
+class MonthConstant{
+  static const monthList = [
+    "Baisakh",
+    "Jestha",
+    "Ashar",
+    "Shrawan",
+    "Bhadra",
+    "Ashoj",
+    "Kartik",
+    "Mangsir",
+    "Poush",
+    "Magh",
+    "Falgun",
+    "Chaitra",
+  ];
+}

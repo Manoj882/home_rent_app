@@ -157,6 +157,7 @@ class UtilitiesPriceScreen extends StatelessWidget {
           internetFee: double.parse(internetFeeController.text),
           uuid: uid,
         ).toJson();
+        
 
         await FirebaseHelper().addOrUpdateContent(
           context,
