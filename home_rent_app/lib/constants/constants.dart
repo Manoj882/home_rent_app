@@ -22,6 +22,7 @@ class RoomConstant{
 
 class RoomRentConstant{
   static const roomRentCollection = "room-rent";
+  static const roomId = "roomId";
 }
 
 class MonthConstant{

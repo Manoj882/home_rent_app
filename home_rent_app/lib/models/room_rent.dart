@@ -1,6 +1,7 @@
 class RoomRent{
   late String month;
   late String roomId;
+  late String? roomRentId;
   late double electricityUnits;
   late double electricityUnitPrice;
   late double electricityTotalPrice;
@@ -27,7 +28,7 @@ class RoomRent{
 
   });
 
-  RoomRent.fromJson(Map obj){
+  RoomRent.fromJson(Map obj, this.roomRentId){
     month = obj["month"];
     roomId = obj["roomId"];
     electricityUnits = obj["electricityUnits"];
@@ -38,7 +39,7 @@ class RoomRent{
     rentAmount = obj["rentAmount"];
     totalAmount = obj["totalAmount"];
     paidAmount = obj["paidAmount"];
-    remainingAmount = obj["remainingAmount"];
+    remainingAmount = double.parse(obj["remainingAmount"].toString());
   }
 
   Map<String, dynamic> toJson(){

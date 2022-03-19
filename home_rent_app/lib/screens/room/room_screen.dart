@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:home_rent_app/provider/room_rent_provider.dart';
 import 'package:home_rent_app/provider/utilities_price_provider.dart';
+import 'package:home_rent_app/screens/room/rent_history_screen.dart';
+import 'package:home_rent_app/utils/navigate.dart';
 import 'package:home_rent_app/utils/show_toast_message.dart';
 import 'package:home_rent_app/utils/size_config.dart';
 import 'package:home_rent_app/utils/validation_mixin.dart';
 import 'package:home_rent_app/widgets/curved_body_widget.dart';
 import 'package:home_rent_app/widgets/general_alert_dialog.dart';
 import 'package:home_rent_app/widgets/general_drop_down.dart';
+import 'package:home_rent_app/widgets/general_table_row.dart';
 import 'package:home_rent_app/widgets/general_text_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/room.dart';
+import '../../models/room_rent.dart';
 
 class RoomScreen extends StatefulWidget {
   const RoomScreen({required this.room, Key? key}) : super(key: key);
@@ -39,7 +43,13 @@ class _RoomScreenState extends State<RoomScreen> {
       ),
       body: CurvedBodyWidget(
         widget: SingleChildScrollView(
-          child: showForm ? FormWidget(roomId: widget.room.id!,) : const Histories(),
+          child: showForm
+              ? FormWidget(
+                  roomId: widget.room.id!,
+                )
+              : Histories(
+                  roomId: widget.room.id!,
+                ),
         ),
       ),
     );
@@ -152,7 +162,9 @@ class FormWidget extends StatelessWidget {
 }
 
 class Histories extends StatelessWidget {
-  const Histories({Key? key}) : super(key: key);
+  const Histories({required this.roomId, Key? key}) : super(key: key);
+
+  final String roomId;
 
   @override
   Widget build(BuildContext context) {
@@ -166,86 +178,76 @@ class Histories extends StatelessWidget {
         SizedBox(
           height: SizeConfig.height,
         ),
-        buildTableCard(context),
+        FutureBuilder(
+            future: Provider.of<RoomRentProvider>(context, listen: false)
+                .fetchRoomRent(roomId: roomId),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                );
+              }
+              final roomrentList =
+                  Provider.of<RoomRentProvider>(context).roomRentList;
+              return ListView.separated(
+                shrinkWrap: true,
+                primary: false,
+                itemCount: roomrentList.length,
+                itemBuilder: (context, index) {
+                  return buildTableCard(context, roomrentList[index]);
+                },
+                separatorBuilder: (context, index) => SizedBox(
+                  height: SizeConfig.height,
+                ),
+              );
+            }),
       ],
     );
   }
 
-  Widget buildTableCard(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: SizeConfig.width * 2,
-          vertical: SizeConfig.height * 2,
-        ),
-        child: Table(
-          children: [
-            buildTableRow(
-              context,
-              title: "Month",
-              isAmount: false,
-              month: "Magh",
-            ),
-            buildTableSpacer(context),
-            buildTableRow(
-              context,
-              title: "Total Amount",
-              amount: 350,
-            ),
-            buildTableSpacer(context),
-            buildTableRow(
-              context,
-              title: "Paid Amount",
-              amount: 250,
-            ),
-            buildTableSpacer(context),
-            buildTableRow(
-              context,
-              title: "Remaining Amount",
-              amount: 50,
-            ),
-          ],
+  Widget buildTableCard(BuildContext context, RoomRent model) {
+    final tableRow = GeneralTableRow();
+    return InkWell(
+      onTap: () => Navigate(
+        context,
+        RentHistoryScreen(model: model),
+      ),
+      child: Card(
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: SizeConfig.width * 2,
+            vertical: SizeConfig.height * 2,
+          ),
+          child: Table(
+            children: [
+              tableRow.buildTableRow(
+                context,
+                title: "Month",
+                isAmount: false,
+                month: model.month,
+              ),
+              tableRow.buildTableSpacer(context),
+              tableRow.buildTableRow(
+                context,
+                title: "Total Amount",
+                amount: model.totalAmount,
+              ),
+              tableRow.buildTableSpacer(context),
+              tableRow.buildTableRow(
+                context,
+                title: "Paid Amount",
+                amount: model.paidAmount,
+              ),
+              tableRow.buildTableSpacer(context),
+              tableRow.buildTableRow(
+                context,
+                title: "Remaining Amount",
+                amount: model.remainingAmount,
+              ),
+            ],
+          ),
         ),
       ),
-    );
-  }
-
-  TableRow buildTableSpacer(BuildContext context) {
-    return TableRow(
-      children: [
-        SizedBox(
-          height: SizeConfig.height,
-        ),
-        SizedBox(
-          height: SizeConfig.height,
-        ),
-      ],
-    );
-  }
-
-  TableRow buildTableRow(
-    BuildContext context, {
-    required String title,
-    double? amount,
-    String? month,
-    bool isAmount = true,
-  }) {
-    return TableRow(
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.bodyText2!.copyWith(
-                fontSize: SizeConfig.width * 3.5,
-              ),
-        ),
-        Text(
-          isAmount ? "Rs. $amount!" : month!,
-          textAlign: TextAlign.end,
-          style: Theme.of(context).textTheme.bodyText1!.copyWith(
-                fontSize: SizeConfig.width * 3.5,
-              ),
-        ),
-      ],
     );
   }
 }

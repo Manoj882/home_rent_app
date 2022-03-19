@@ -8,6 +8,30 @@ import 'package:provider/provider.dart';
 import '../utils/show_toast_message.dart';
 
 class RoomRentProvider extends ChangeNotifier {
+  final List<RoomRent> _roomRentList = [];
+
+  List<RoomRent> get roomRentList => _roomRentList;
+
+  fetchRoomRent({
+    required String roomId,
+  }) async {
+    try {
+      final data = await FirebaseHelper().getData(
+        collectionId: RoomRentConstant.roomRentCollection,
+        whereId: RoomRentConstant.roomId,
+        whereValue: roomId,
+      );
+      // print(data.docs);
+      if (_roomRentList.length != data.docs.length) {
+        for (var element in data.docs) {
+          _roomRentList.add(RoomRent.fromJson(element.data(), element.id));
+        }
+      }
+    } catch (ex) {
+      print(ex.toString());
+    }
+  }
+
   addRoomRent(
     BuildContext context, {
     required String roomId,
@@ -25,7 +49,8 @@ class RoomRentProvider extends ChangeNotifier {
         showToast("Please enter utilities price for your home");
       } else {
         final electricityUnits = double.parse(electricityUnitText);
-        final electricityPrice = utilityPrice.electriciyUnitPrice;
+        final electricityPrice = electricityUnits*utilityPrice.electriciyUnitPrice;
+        
         final rentAmount = double.parse(rentAmountText);
         final sum =
             electricityPrice + utilityPrice.internetFee + utilityPrice.waterFee;
@@ -40,7 +65,7 @@ class RoomRentProvider extends ChangeNotifier {
           rentAmount: rentAmount,
           totalAmount: sum,
           paidAmount: 0,
-          remainingAmount: 0,
+          remainingAmount: sum,
         ).toJson();
         await FirebaseHelper().addData(
           context,
@@ -51,5 +76,31 @@ class RoomRentProvider extends ChangeNotifier {
     } catch (ex) {
       print(ex.toString());
     }
+  }
+
+  updateRoomRent(
+    BuildContext context,
+    {
+    required String docId,
+    required double paidAmount,
+    required double remainingAmount,
+  }) async {
+    final map = {
+      "paidAmount": paidAmount,
+      "remainingAmount": remainingAmount - paidAmount,
+    };
+    await FirebaseHelper().updateData(
+      context,
+      map: map,
+      collectionId: RoomRentConstant.roomRentCollection,
+      docId: docId,
+    );
+    final room = _roomRentList.firstWhere((element) => element.roomRentId! == docId);
+    room.paidAmount = paidAmount;
+    room.remainingAmount = remainingAmount;
+    final index = roomRentList.indexOf(room);
+    _roomRentList.removeAt(index);
+    notifyListeners();
+
   }
 }

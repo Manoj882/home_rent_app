@@ -14,7 +14,7 @@ class UtilitiesPriceProvider extends ChangeNotifier {
     try{
     final uuid =Provider.of<UserProvider>(context, listen: false).user.uuid;
     final data = await FirebaseHelper().getData(
-      context,
+    
       collectionId: UtilitiesPriceConstant.utilityPriceCollection,
       whereId: UserConstants.userId,
       whereValue: uuid,
